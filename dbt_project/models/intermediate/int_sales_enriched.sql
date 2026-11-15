@@ -26,6 +26,7 @@ select
     sales.day_number,
     calendar.calendar_date,
     calendar.week_id,
+    calendar.week_number,
     sales.units_sold,
     prices.sell_price,
     isodow(calendar.calendar_date) as day_of_week,  -- 1 = Monday ... 7 = Sunday
