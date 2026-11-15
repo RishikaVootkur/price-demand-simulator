@@ -389,6 +389,7 @@ source = { virtual = "." }
 dependencies = [
     { name = "duckdb" },
     { name = "kaggle" },
+    { name = "requests" },
     { name = "six" },
 ]
 
@@ -401,6 +402,7 @@ dev = [
 requires-dist = [
     { name = "duckdb", specifier = ">=2.0.0" },
     { name = "kaggle", specifier = ">=2.2.5" },
+    { name = "requests", specifier = ">=2.34.2" },
     { name = "six", specifier = ">=1.17.0" },
 ]
 
