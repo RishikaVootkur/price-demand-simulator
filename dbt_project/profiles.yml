@@ -3,6 +3,7 @@ price_demand_simulator:
   outputs:
     dev:
       type: duckdb
-      # Relative to dbt_project/. CI overrides this with a small sample database.
+      # Relative to the working directory, so run dbt from inside dbt_project/.
+      # Set DUCKDB_PATH to point dbt at a different database file.
       path: "{{ env_var('DUCKDB_PATH', '../data/warehouse.duckdb') }}"
       threads: 4

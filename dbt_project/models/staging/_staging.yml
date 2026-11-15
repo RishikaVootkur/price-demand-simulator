@@ -47,8 +47,21 @@ models:
           arguments:
             columns: [item_id, store_id, week_id]
     columns:
-      - name: week_id
+      - name: item_id
         data_tests: [not_null]
+      - name: store_id
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: [CA_1, CA_2, CA_3, CA_4, TX_1, TX_2, TX_3, WI_1, WI_2, WI_3]
+      - name: week_id
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_m5__calendar')
+                field: week_id
       - name: sell_price
         description: Shelf price in US dollars
         data_tests:
@@ -84,9 +97,17 @@ models:
     columns:
       - name: state_id
         data_tests:
+          - not_null
           - accepted_values:
               arguments:
                 values: [CA, TX, WI]
+      - name: calendar_date
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_m5__calendar')
+                field: calendar_date
       - name: temp_max_c
         data_tests: [not_null]
       - name: temp_min_c
