@@ -1,0 +1,120 @@
+version: 2
+
+models:
+  - name: stg_m5__sales
+    description: Daily unit sales, one row per item, store, and day
+    data_tests:
+      - unique_combination:
+          arguments:
+            columns: [item_id, store_id, day_number]
+    columns:
+      - name: item_id
+        data_tests: [not_null]
+      - name: store_id
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: [CA_1, CA_2, CA_3, CA_4, TX_1, TX_2, TX_3, WI_1, WI_2, WI_3]
+      - name: state_id
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: [CA, TX, WI]
+      - name: category_id
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: [FOODS, HOBBIES, HOUSEHOLD]
+      - name: day_number
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_m5__calendar')
+                field: day_number
+      - name: units_sold
+        data_tests:
+          - not_null
+          - positive:
+              arguments:
+                allow_zero: true
+
+  - name: stg_m5__prices
+    description: Weekly sell price, one row per item, store, and Walmart week
+    data_tests:
+      - unique_combination:
+          arguments:
+            columns: [item_id, store_id, week_id]
+    columns:
+      - name: item_id
+        data_tests: [not_null]
+      - name: store_id
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: [CA_1, CA_2, CA_3, CA_4, TX_1, TX_2, TX_3, WI_1, WI_2, WI_3]
+      - name: week_id
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_m5__calendar')
+                field: week_id
+      - name: sell_price
+        description: Shelf price in US dollars
+        data_tests:
+          - not_null
+          - positive
+
+  - name: stg_m5__calendar
+    description: One row per day, linking day_number to date and Walmart week
+    columns:
+      - name: day_number
+        data_tests: [unique, not_null]
+      - name: calendar_date
+        data_tests: [unique, not_null]
+      - name: week_id
+        data_tests: [not_null]
+      - name: event_type_1
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: [Sporting, Cultural, National, Religious]
+      - name: event_type_2
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: [Sporting, Cultural, National, Religious]
+
+  - name: stg_open_meteo__weather
+    description: Daily weather per state
+    data_tests:
+      - unique_combination:
+          arguments:
+            columns: [state_id, calendar_date]
+    columns:
+      - name: state_id
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: [CA, TX, WI]
+      - name: calendar_date
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_m5__calendar')
+                field: calendar_date
+      - name: temp_max_c
+        data_tests: [not_null]
+      - name: temp_min_c
+        data_tests: [not_null]
+      - name: precipitation_mm
+        data_tests:
+          - not_null
+          - positive:
+              arguments:
+                allow_zero: true

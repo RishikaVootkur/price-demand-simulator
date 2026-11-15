@@ -1,0 +1,14 @@
+name: price_demand_simulator
+version: "1.0.0"
+profile: price_demand_simulator
+
+model-paths: ["models"]
+macro-paths: ["macros"]
+test-paths: ["tests"]
+clean-targets: ["target", "dbt_packages", "logs"]
+
+models:
+  price_demand_simulator:
+    staging:
+      +materialized: view
+      +schema: staging
