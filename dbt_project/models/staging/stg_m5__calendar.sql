@@ -3,6 +3,8 @@ select
     cast(replace(d, 'd_', '') as integer) as day_number,
     date as calendar_date,
     wm_yr_wk as week_id,
+    -- week_id jumps at year ends (11152 -> 11201); week_number counts 1, 2, 3, ... with no jumps
+    dense_rank() over (order by wm_yr_wk) as week_number,
     weekday as weekday_name,
     month as month_number,
     year as calendar_year,

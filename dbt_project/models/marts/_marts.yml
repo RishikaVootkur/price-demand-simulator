@@ -1,0 +1,46 @@
+version: 2
+
+models:
+  - name: fct_demand_features
+    description: >
+      Model-ready demand features, one row per item, store, and day on sale.
+      Sales-based features look back at least 7 days. Price features use the current week's price,
+      which the retailer plans in advance. Weather is the observed weather for the day; a production
+      forecast would use a weather forecast instead.
+    data_tests:
+      - unique_combination:
+          arguments:
+            columns: [item_id, store_id, calendar_date]
+    columns:
+      - name: units_sold
+        description: Target. Units sold that day.
+        data_tests:
+          - not_null
+          - positive:
+              arguments:
+                allow_zero: true
+      - name: sell_price
+        description: >
+          Weekly price for the item and store, repeated on each day of the Walmart week.
+          M5 gives the average price over the week, so a mid-week price change is blended.
+        data_tests: [not_null, positive]
+      - name: week_number
+        description: Walmart week counted 1, 2, 3, ... with no gaps at year ends
+        data_tests: [not_null]
+      - name: avg_price_prior_4wk
+        description: Mean weekly price over up to 4 previous weeks. Null in the item's first week on sale.
+      - name: price_change_vs_prior_4wk
+        description: sell_price / avg_price_prior_4wk - 1. -0.2 means 20% below the recent price.
+      - name: units_lag_7
+        description: Units sold exactly 7 days earlier. Null when the item was not on sale that day.
+      - name: units_lag_28
+        description: Units sold exactly 28 days earlier. Null when the item was not on sale that day.
+      - name: units_mean_7d_from_lag_7
+        description: Mean units over days t-13 to t-7. Null unless all 7 days were on sale.
+      - name: units_mean_28d_from_lag_7
+        description: Mean units over days t-34 to t-7. Null unless all 28 days were on sale.
+      - name: is_snap_day
+        description: SNAP benefits paid out in this store's state that day
+        data_tests: [not_null]
+      - name: is_event_day
+        data_tests: [not_null]

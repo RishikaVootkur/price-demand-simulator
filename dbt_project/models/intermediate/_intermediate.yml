@@ -1,0 +1,28 @@
+version: 2
+
+models:
+  - name: int_sales_enriched
+    description: Sales joined to price, calendar, and weather. Only days the item was on sale.
+    data_tests:
+      - unique_combination:
+          arguments:
+            columns: [item_id, store_id, calendar_date]
+    columns:
+      - name: calendar_date
+        data_tests: [not_null]
+      - name: units_sold
+        data_tests: [not_null]
+      - name: sell_price
+        data_tests: [not_null, positive]
+      - name: day_of_week
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: [1, 2, 3, 4, 5, 6, 7]
+      - name: is_snap_day
+        data_tests: [not_null]
+      - name: temp_max_c
+        description: Null would mean the weather join missed this state and date
+        data_tests: [not_null]
+      - name: precipitation_mm
+        data_tests: [not_null]
