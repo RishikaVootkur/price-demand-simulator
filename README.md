@@ -19,6 +19,8 @@ DuckDB, dbt-duckdb, Dagster, MLflow, LightGBM, statsmodels, Streamlit, pytest, S
 uv sync                      # create .venv and install locked dependencies
 # Kaggle token must be saved at ~/.kaggle/access_token, and the M5 competition rules accepted
 uv run kaggle competitions download -c m5-forecasting-accuracy -p data/raw
+unzip -o data/raw/m5-forecasting-accuracy.zip calendar.csv sell_prices.csv sales_train_evaluation.csv -d data/raw \
+  && rm data/raw/m5-forecasting-accuracy.zip
 ```
 
 ## Repo layout
