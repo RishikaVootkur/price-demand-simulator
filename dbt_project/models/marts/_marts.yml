@@ -1,0 +1,39 @@
+version: 2
+
+models:
+  - name: fct_demand_features
+    description: >
+      Model-ready demand features, one row per item, store, and day on sale.
+      Sales-based features look back at least 7 days; price features use the current price.
+    data_tests:
+      - unique_combination:
+          arguments:
+            columns: [item_id, store_id, calendar_date]
+    columns:
+      - name: units_sold
+        description: Target. Units sold that day.
+        data_tests:
+          - not_null
+          - positive:
+              arguments:
+                allow_zero: true
+      - name: sell_price
+        description: Shelf price that day (weekly price applied to each day of the week)
+        data_tests: [not_null, positive]
+      - name: avg_price_prior_28d
+        description: Mean price over the previous 28 days. Null on the item's first day on sale.
+      - name: price_change_vs_prior_28d
+        description: sell_price / avg_price_prior_28d - 1. -0.2 means 20% below the recent price.
+      - name: units_lag_7
+        description: Units sold 7 days earlier. Null in the item's first 7 days on sale.
+      - name: units_lag_28
+        description: Units sold 28 days earlier. Null in the item's first 28 days on sale.
+      - name: units_mean_7d_from_lag_7
+        description: Mean units over days t-13 to t-7.
+      - name: units_mean_28d_from_lag_7
+        description: Mean units over days t-34 to t-7.
+      - name: is_snap_day
+        description: SNAP benefits paid out in this store's state that day
+        data_tests: [not_null]
+      - name: is_event_day
+        data_tests: [not_null]
