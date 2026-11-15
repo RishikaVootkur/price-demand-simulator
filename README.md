@@ -23,6 +23,7 @@ unzip -o data/raw/m5-forecasting-accuracy.zip calendar.csv sell_prices.csv sales
   && rm data/raw/m5-forecasting-accuracy.zip
 uv run python -m ingest.load_m5        # load the CSVs into data/warehouse.duckdb
 uv run python -m ingest.load_weather   # load daily weather per state from Open-Meteo
+cd dbt_project && uv run dbt build     # build dbt models and run data tests
 ```
 
 ## Repo layout

@@ -1,0 +1,8 @@
+price_demand_simulator:
+  target: dev
+  outputs:
+    dev:
+      type: duckdb
+      # Relative to dbt_project/. CI overrides this with a small sample database.
+      path: "{{ env_var('DUCKDB_PATH', '../data/warehouse.duckdb') }}"
+      threads: 4
