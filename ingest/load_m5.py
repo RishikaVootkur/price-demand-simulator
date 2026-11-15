@@ -21,22 +21,33 @@ M5_FILES = {
 
 def load_m5(db_path: Path = DB_PATH, raw_dir: Path = RAW_DIR) -> dict[str, int]:
     """Load each M5 CSV into raw.<table> and return the row count per table."""
-    missing = [name for name in M5_FILES.values() if not (raw_dir / name).exists()]
+    missing = [
+        name
+        for name in M5_FILES.values()
+        if not (raw_dir / name).is_file() or (raw_dir / name).stat().st_size == 0
+    ]
     if missing:
-        raise FileNotFoundError(f"Missing in {raw_dir}: {', '.join(missing)}")
+        raise FileNotFoundError(f"Missing or empty in {raw_dir}: {', '.join(missing)}")
 
     db_path.parent.mkdir(parents=True, exist_ok=True)
     row_counts = {}
 
     with duckdb.connect(str(db_path)) as con:
-        con.execute("CREATE SCHEMA IF NOT EXISTS raw")
-        for table, filename in M5_FILES.items():
-            csv_path = (raw_dir / filename).as_posix()
-            con.execute(
-                f"CREATE OR REPLACE TABLE raw.{table} AS "
-                f"SELECT * FROM read_csv('{csv_path}', header = true)"
-            )
-            row_counts[table] = con.execute(f"SELECT count(*) FROM raw.{table}").fetchone()[0]
+        # One transaction: either all three tables are replaced, or none are.
+        con.begin()
+        try:
+            con.execute("CREATE SCHEMA IF NOT EXISTS raw")
+            for table, filename in M5_FILES.items():
+                con.execute(
+                    f"CREATE OR REPLACE TABLE raw.{table} AS "
+                    "SELECT * FROM read_csv(?, header = true)",
+                    [(raw_dir / filename).as_posix()],
+                )
+                row_counts[table] = con.execute(f"SELECT count(*) FROM raw.{table}").fetchone()[0]
+            con.commit()
+        except Exception:
+            con.rollback()
+            raise
 
     return row_counts
 

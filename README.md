@@ -21,6 +21,7 @@ uv sync                      # create .venv and install locked dependencies
 uv run kaggle competitions download -c m5-forecasting-accuracy -p data/raw
 unzip -o data/raw/m5-forecasting-accuracy.zip calendar.csv sell_prices.csv sales_train_evaluation.csv -d data/raw \
   && rm data/raw/m5-forecasting-accuracy.zip
+uv run python -m ingest.load_m5   # load the CSVs into data/warehouse.duckdb
 ```
 
 ## Repo layout
