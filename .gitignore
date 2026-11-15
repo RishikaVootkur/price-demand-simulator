@@ -1,5 +1,5 @@
 # Data: raw CSVs and the DuckDB file are large and rebuilt by the pipeline
-data/
+/data/
 
 # Python virtual environment and caches
 .venv/
@@ -11,6 +11,8 @@ __pycache__/
 dbt_project/target/
 dbt_project/dbt_packages/
 dbt_project/logs/
+logs/
+target/
 
 # MLflow runs and Dagster run history (local state, not source code)
 mlruns/
@@ -20,6 +22,8 @@ mlartifacts/
 # Secrets such as the Kaggle API key
 .env
 kaggle.json
+access_token
+.kaggle/
 
 # Mac clutter
 .DS_Store

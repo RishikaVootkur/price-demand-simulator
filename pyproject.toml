@@ -4,5 +4,6 @@ version = "0.1.0"
 requires-python = ">=3.12"
 dependencies = [
     "kaggle>=2.2.5",
+    # kaggle 2.2.5 imports six but does not declare it; remove once kaggle fixes this
     "six>=1.17.0",
 ]
